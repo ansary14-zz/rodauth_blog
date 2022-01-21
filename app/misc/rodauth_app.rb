@@ -11,6 +11,9 @@ class RodauthApp < Rodauth::Rails::App
     r.rodauth # route rodauth requests
 
     # ==> Authenticating requests
+    if r.path.start_with?("/posts")
+      rodauth.require_authentication
+    end
     # Call `rodauth.require_authentication` for requests that you want to
     # require authentication for. For example:
     #
