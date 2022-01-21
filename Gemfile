@@ -56,3 +56,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "rodauth-rails", "~> 1.1"
+
+gem "rotp", "~> 6.2"
+gem "rqrcode", "~> 2.1"
