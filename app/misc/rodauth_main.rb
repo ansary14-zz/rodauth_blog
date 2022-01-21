@@ -138,6 +138,15 @@ class RodauthMain < Rodauth::Rails::Auth
     # Redirect to login page after password reset.
     reset_password_redirect { login_path }
 
+    # redirect the user to the MFA page if they have MFA setup
+    login_redirect do
+      if uses_two_factor_authentication?
+        two_factor_auth_required_redirect
+      else
+        "/"
+      end
+    end
+
     # ==> Deadlines
     # Change default deadlines for some actions.
     # verify_account_grace_period 3.days
