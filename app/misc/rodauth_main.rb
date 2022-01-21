@@ -14,6 +14,20 @@ class RodauthMain < Rodauth::Rails::Auth
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "04de0364cd1b4c3dfce5a2a70d738a26d667912887e4f6fce0d588f575ae4b0744945ad492b889c16369faabb260723fa9f15dc811e09fbc570116a4f1b4823a"
 
+    #validate that name filled in and create the associated profile record after the account is created
+    before_create_account do
+      # Validate presence of the name field
+      throw_error_status(422, "name", "must be present") unless param_or_nil("name")
+    end
+    after_create_account do
+      # Create the associated profile record with name
+      Profile.create!(account_id: account_id, name: param("name"))
+    end
+    after_close_account do
+      # Delete the associated profile record
+      Profile.find_by!(account_id: account_id).destroy
+    end
+
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
 
