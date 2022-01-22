@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_21_160154) do
+ActiveRecord::Schema.define(version: 2022_01_21_181422) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -36,6 +36,11 @@ ActiveRecord::Schema.define(version: 2022_01_21_160154) do
     t.string "key", null: false
     t.datetime "deadline", null: false
     t.datetime "email_last_sent", default: -> { "CURRENT_TIMESTAMP" }, null: false
+  end
+
+  create_table "account_recovery_codes", primary_key: ["id", "code"], force: :cascade do |t|
+    t.bigint "id", null: false
+    t.string "code", null: false
   end
 
   create_table "account_remember_keys", force: :cascade do |t|
@@ -76,6 +81,7 @@ ActiveRecord::Schema.define(version: 2022_01_21_160154) do
   add_foreign_key "account_otp_keys", "accounts", column: "id"
   add_foreign_key "account_password_hashes", "accounts", column: "id"
   add_foreign_key "account_password_reset_keys", "accounts", column: "id"
+  add_foreign_key "account_recovery_codes", "accounts", column: "id"
   add_foreign_key "account_remember_keys", "accounts", column: "id"
   add_foreign_key "account_verification_keys", "accounts", column: "id"
   add_foreign_key "posts", "accounts"

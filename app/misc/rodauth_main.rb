@@ -5,7 +5,7 @@ class RodauthMain < Rodauth::Rails::Auth
       :login, :logout, :remember,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change, :close_account,
-      :otp
+      :otp, :recovery_codes
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -27,6 +27,15 @@ class RodauthMain < Rodauth::Rails::Auth
     after_close_account do
       # Delete the associated profile record
       Profile.find_by!(account_id: account_id).destroy
+    end
+
+    # auto generate recovery codes after TOTP setup
+    auto_add_recovery_codes? true
+    # display recovery codes after TOTP setup
+    after_otp_setup do
+      set_notice_now_flash "#{otp_setup_notice_flash}, please make note of your recovery codes"
+      response.write add_recovery_codes_view
+      request.halt # don't process the request any further
     end
 
     # Specify the controller used for view rendering and CSRF verification.
