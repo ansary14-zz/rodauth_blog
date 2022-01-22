@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_21_181422) do
+ActiveRecord::Schema.define(version: 2022_01_22_143655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -60,6 +60,46 @@ ActiveRecord::Schema.define(version: 2022_01_21_181422) do
     t.index ["email"], name: "index_accounts_on_email", unique: true, where: "((status)::text = ANY ((ARRAY['unverified'::character varying, 'verified'::character varying])::text[]))"
   end
 
+  create_table "oauth_applications", force: :cascade do |t|
+    t.integer "account_id"
+    t.string "name", null: false
+    t.string "description", null: false
+    t.string "homepage_url", null: false
+    t.string "redirect_uri", null: false
+    t.string "client_id", null: false
+    t.string "client_secret", null: false
+    t.string "scopes", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["client_id"], name: "index_oauth_applications_on_client_id", unique: true
+    t.index ["client_secret"], name: "index_oauth_applications_on_client_secret", unique: true
+  end
+
+  create_table "oauth_grants", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "oauth_application_id"
+    t.string "code", null: false
+    t.datetime "expires_in", null: false
+    t.string "redirect_uri"
+    t.datetime "revoked_at"
+    t.string "scopes", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "access_type", default: "offline", null: false
+    t.index ["oauth_application_id", "code"], name: "index_oauth_grants_on_oauth_application_id_and_code", unique: true
+  end
+
+  create_table "oauth_tokens", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "oauth_grant_id"
+    t.integer "oauth_token_id"
+    t.integer "oauth_application_id"
+    t.string "token", null: false
+    t.string "refresh_token"
+    t.datetime "expires_in", null: false
+    t.datetime "revoked_at"
+    t.string "scopes", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -84,6 +124,13 @@ ActiveRecord::Schema.define(version: 2022_01_21_181422) do
   add_foreign_key "account_recovery_codes", "accounts", column: "id"
   add_foreign_key "account_remember_keys", "accounts", column: "id"
   add_foreign_key "account_verification_keys", "accounts", column: "id"
+  add_foreign_key "oauth_applications", "accounts"
+  add_foreign_key "oauth_grants", "accounts"
+  add_foreign_key "oauth_grants", "oauth_applications"
+  add_foreign_key "oauth_tokens", "accounts"
+  add_foreign_key "oauth_tokens", "oauth_applications"
+  add_foreign_key "oauth_tokens", "oauth_grants"
+  add_foreign_key "oauth_tokens", "oauth_tokens"
   add_foreign_key "posts", "accounts"
   add_foreign_key "profiles", "accounts"
 end

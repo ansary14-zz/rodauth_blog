@@ -59,3 +59,6 @@ gem "rodauth-rails", "~> 1.1"
 
 gem "rotp", "~> 6.2"
 gem "rqrcode", "~> 2.1"
+
+gem "rodauth-oauth"
+
