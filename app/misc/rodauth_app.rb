@@ -20,6 +20,11 @@ class RodauthApp < Rodauth::Rails::App
       rodauth.require_two_factor_authenticated
     end
 
+    rodauth.oauth_applications # oauth application management dashboard
+    # OpenID specific, enable service discovery
+    rodauth.openid_configuration
+    rodauth.webfinger
+
     # Call `rodauth.require_authentication` for requests that you want to
     # require authentication for. For example:
     #

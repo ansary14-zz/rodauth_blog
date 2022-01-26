@@ -5,7 +5,8 @@ class RodauthMain < Rodauth::Rails::Auth
       :login, :logout, :remember,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change, :close_account,
-      :otp, :recovery_codes
+      :otp, :recovery_codes,
+      :oauth, :oidc
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -46,6 +47,34 @@ class RodauthMain < Rodauth::Rails::Auth
     account_unverified_status_value "unverified"
     account_open_status_value "verified"
     account_closed_status_value "closed"
+
+    # Make sure you hash the refresh tokens in the DB.
+    oauth_tokens_refresh_token_hash_column :refresh_token_hash
+
+    # list of OIDC and OAuth scopes you handle
+    oauth_application_scopes %w[openid email profile posts.read]
+
+    # default scopes to give to new applications, application-management specific
+    oauth_application_default_scope %w[openid email profile posts.read]
+
+    # by default you're only allowed to use https redirect URIs. But we're developing,
+    # so it's fine.
+    if Rails.env.development?
+      oauth_valid_uri_schemes %w[http https]
+    end
+
+    # multiple times.
+    get_oidc_param do |account, param|
+      @profile ||= Profile.find_by(account_id: account[:id])
+      case param
+      when :email
+        account[:email]
+      when :email_verified
+        account[:status] == "verified"
+      when :name
+        @profile.name
+      end
+    end
 
     # Store password hash in a column instead of a separate table.
     # account_password_hash_column :password_digest

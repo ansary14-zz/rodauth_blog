@@ -1,3 +1,11 @@
+GIT
+  remote: https://gitlab.com/honeyryderchuck/rodauth-oauth.git
+  revision: a65922b56540a25939ed07cf3a4261002f3912ec
+  branch: master
+  specs:
+    rodauth-oauth (0.7.4)
+      rodauth (~> 2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -159,7 +167,6 @@ GEM
     rodauth (2.19.0)
       roda (>= 2.6.0)
       sequel (>= 4)
-    rodauth-oauth (0.7.2)
     rodauth-rails (1.1.0)
       bcrypt
       railties (>= 4.2, < 8)
@@ -241,7 +248,7 @@ DEPENDENCIES
   puma (~> 5.0)
   rack-mini-profiler (~> 2.0)
   rails (~> 6.1.4, >= 6.1.4.4)
-  rodauth-oauth
+  rodauth-oauth!
   rodauth-rails (~> 1.1)
   rotp (~> 6.2)
   rqrcode (~> 2.1)
